@@ -69,6 +69,7 @@ void Error_Handler(void);
 #define LED_BLUE_GPIO_Port GPIOD
 #define USER_BUTTON_Pin GPIO_PIN_1
 #define USER_BUTTON_GPIO_Port GPIOE
+#define USER_BUTTON_EXTI_IRQn EXTI1_IRQn
 
 /* USER CODE BEGIN Private defines */
 

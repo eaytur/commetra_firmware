@@ -426,11 +426,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LED_YELLOW_Pin|LED_RED_Pin|LED_BLUE_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : JOYSTICK_SW_Pin USER_BUTTON_Pin */
-  GPIO_InitStruct.Pin = JOYSTICK_SW_Pin|USER_BUTTON_Pin;
+  /*Configure GPIO pin : JOYSTICK_SW_Pin */
+  GPIO_InitStruct.Pin = JOYSTICK_SW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  HAL_GPIO_Init(JOYSTICK_SW_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_YELLOW_Pin LED_RED_Pin LED_BLUE_Pin */
   GPIO_InitStruct.Pin = LED_YELLOW_Pin|LED_RED_Pin|LED_BLUE_Pin;
@@ -439,12 +439,29 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : USER_BUTTON_Pin */
+  GPIO_InitStruct.Pin = USER_BUTTON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(USER_BUTTON_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == USER_BUTTON_Pin)
+    {
+        ButtonTask_Notify();
+    }
+}
 
 /* USER CODE END 4 */
 

@@ -1,8 +1,10 @@
 #include "button_task.h"
 #include "led_driver.h"
+#include "button_driver.h"
 #include "cmsis_os.h"
 
 #define BUTTON_TASK_LED LED_YELLOW
+#define BUTTON_DEBOUNCE_MS    30
 
 static const osThreadAttr_t buttonTaskAttributes = {
   .name = "buttonTask",
@@ -26,7 +28,20 @@ static void ButtonTask_Run(void *argument)
             continue;
         }
 
-        (void)LedDriver_Toggle(BUTTON_TASK_LED);
+        osDelay(BUTTON_DEBOUNCE_MS);
+
+        ButtonState state;
+
+        if (ButtonDriver_GetState(BUTTON_USER, &state) != BUTTON_OK)
+        {
+            continue;
+        }
+
+        if (state == BUTTON_PRESSED)
+        {
+            (void)LedDriver_Toggle(BUTTON_TASK_LED);
+        }
+        (void)osSemaphoreAcquire(buttonSemaphore, 0U);
     }
 }
 

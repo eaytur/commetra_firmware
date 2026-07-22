@@ -13,5 +13,6 @@ typedef enum
 } UartDriverStatus;
 
 UartDriverStatus UartDriver_Write(const uint8_t *data, size_t length);
+UartDriverStatus UartDriver_Read(uint8_t *data, size_t length);
 
 #endif //UART_DRIVER_H

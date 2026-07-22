@@ -13,6 +13,7 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/led
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/button
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/uart
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/heartbeat
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/button
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F4xx_HAL_Driver/Inc
@@ -35,6 +36,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/led/led_driver.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/button/button_driver.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/uart/uart_driver.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/heartbeat/heartbeat_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/button/button_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32f407xx.s

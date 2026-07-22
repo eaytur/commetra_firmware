@@ -16,6 +16,7 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/uart
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/heartbeat
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/button
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/uart
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F4xx_HAL_Driver/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Middlewares/Third_Party/FreeRTOS/Source/include
@@ -39,6 +40,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Drivers/uart/uart_driver.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/heartbeat/heartbeat_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/button/button_task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Application/uart/uart_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32f407xx.s
 )
 

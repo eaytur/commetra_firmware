@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "heartbeat_task.h"
 #include "button_task.h"
+#include "uart_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -143,6 +144,7 @@ int main(void)
   /* add threads, ... */
   HeartbeatTask_Create();
   ButtonTask_Create();
+  UartTask_Create();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */

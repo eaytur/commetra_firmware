@@ -2,6 +2,8 @@
 #include "uart_driver.h"
 #include "cmsis_os.h"
 
+#define UART_TASK_PERIOD 1000
+
 static const osThreadAttr_t uartTaskAttributes = {
   .name = "UartTask",
   .stack_size = 128 * 4,
@@ -12,16 +14,16 @@ static void UartTask_Run(void *argument)
 {
     (void)argument;
 
-    uint8_t data = 0;
+    UartDriverStatus status = UartDriver_StartReceive();
+
+    if (status != UART_DRIVER_OK)
+    {
+        // TODO: add error management
+    }
 
     for (;;)
     {
-        UartDriverStatus status = UartDriver_Read(&data, 1U);
-
-        if (status == UART_DRIVER_OK)
-        {
-            (void)UartDriver_Write(&data, 1U);
-        }
+        osDelay(UART_TASK_PERIOD);
     }
 }
 

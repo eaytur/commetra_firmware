@@ -2,12 +2,12 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_uart.h"
 
-
 #define UART_TX_TIMEOUT_MS  10U
 #define UART_RX_TIMEOUT_MS  HAL_MAX_DELAY
 
 extern UART_HandleTypeDef huart2;
 static uint8_t uartRxByte;
+static UartDriverNotificationCallback notificationCallback = NULL;
 
 UartDriverStatus UartDriver_Write(const uint8_t *data, size_t length)
 {
@@ -69,4 +69,21 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     (void)HAL_UART_Receive_IT(&huart2,
                               &uartRxByte,
                               1U);
+    
+    if (notificationCallback != NULL)
+    {
+        notificationCallback();
+    }
+}
+
+UartDriverStatus UartDriver_RegisterNotificationCallback(UartDriverNotificationCallback callback)
+{
+    if (callback == NULL)
+    {
+        return UART_DRIVER_NULL_PTR;
+    }
+
+    notificationCallback = callback;
+
+    return UART_DRIVER_OK;
 }

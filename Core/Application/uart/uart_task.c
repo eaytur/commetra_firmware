@@ -1,14 +1,16 @@
 #include "uart_task.h"
+#include "cmsis_os2.h"
 #include "uart_driver.h"
 #include "cmsis_os.h"
-
-#define UART_TASK_PERIOD 1000
 
 static const osThreadAttr_t uartTaskAttributes = {
   .name = "UartTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+    
+static osSemaphoreId_t uartRxSemaphore;
+
 
 static void UartTask_Run(void *argument)
 {
@@ -23,12 +25,33 @@ static void UartTask_Run(void *argument)
 
     for (;;)
     {
-        osDelay(UART_TASK_PERIOD);
+        osSemaphoreAcquire(uartRxSemaphore, osWaitForever);
+    }
+}
+
+static void UartTask_Notify(void)
+{
+    if (uartRxSemaphore != NULL)
+    {
+        (void)osSemaphoreRelease(uartRxSemaphore);
     }
 }
 
 UartTaskStatus UartTask_Create(void){
-    
+
+    uartRxSemaphore = osSemaphoreNew(1U, 0U, NULL);
+
+    if (uartRxSemaphore == NULL)
+    {
+        return UART_TASK_CREATION_FAILED;
+    }
+
+    if (UartDriver_RegisterNotificationCallback(UartTask_Notify)
+        != UART_DRIVER_OK)
+    {
+        return UART_TASK_CREATION_FAILED;
+    }    
+
     osThreadId_t threadId =
         osThreadNew(UartTask_Run, NULL, &uartTaskAttributes);
 
@@ -39,3 +62,4 @@ UartTaskStatus UartTask_Create(void){
 
     return UART_TASK_OK;
 }
+

@@ -13,7 +13,10 @@ typedef enum
     UART_DRIVER_ERROR
 } UartDriverStatus;
 
+typedef void (*UartDriverNotificationCallback)(void);
+
 UartDriverStatus UartDriver_Write(const uint8_t *data, size_t length);
 UartDriverStatus UartDriver_StartReceive(void);
+UartDriverStatus UartDriver_RegisterNotificationCallback(UartDriverNotificationCallback callback);
 
 #endif //UART_DRIVER_H

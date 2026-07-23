@@ -1,7 +1,6 @@
 #include "uart_task.h"
 #include "cmsis_os2.h"
 #include "uart_driver.h"
-#include "cmsis_os.h"
 
 static const osThreadAttr_t uartTaskAttributes = {
   .name = "UartTask",
@@ -24,12 +23,14 @@ static void UartTask_Run(void *argument)
 
     for (;;)
     {
-        if (osSemaphoreAcquire(uartRxSemaphore, osWaitForever) == osOK)
+        if (osSemaphoreAcquire(uartRxSemaphore, osWaitForever) != osOK)
         {
-            if (UartDriver_ReadByte(&receivedByte) == UART_DRIVER_OK)
-            {
-                (void)UartDriver_Write(&receivedByte, 1U);
-            }
+            continue;
+        }
+
+        while (UartDriver_ReadByte(&receivedByte) == UART_DRIVER_OK)
+        {
+            (void)UartDriver_Write(&receivedByte, 1U);
         }
     }
 }
@@ -67,4 +68,3 @@ UartTaskStatus UartTask_Create(void){
 
     return UART_TASK_OK;
 }
-

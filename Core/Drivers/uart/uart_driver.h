@@ -10,6 +10,7 @@ typedef enum
     UART_DRIVER_NULL_PTR,
     UART_DRIVER_TIMEOUT,
     UART_DRIVER_BUSY,
+    UART_DRIVER_NO_DATA,
     UART_DRIVER_ERROR
 } UartDriverStatus;
 

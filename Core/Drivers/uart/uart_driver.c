@@ -1,13 +1,19 @@
 #include "uart_driver.h"
+#include "ring_buffer.h"
+
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_uart.h"
 
 #define UART_TX_TIMEOUT_MS  10U
-#define UART_RX_TIMEOUT_MS  HAL_MAX_DELAY
+#define UART_RX_BUFFER_SIZE  128U
 
 extern UART_HandleTypeDef huart2;
-static uint8_t uartRxByte;
+
 static UartDriverNotificationCallback notificationCallback = NULL;
+
+static uint8_t uartRxByte;
+static uint8_t uartRxStorage[UART_RX_BUFFER_SIZE];
+static RingBuffer uartRxBuffer;
 
 UartDriverStatus UartDriver_Write(const uint8_t *data, size_t length)
 {
@@ -39,6 +45,16 @@ UartDriverStatus UartDriver_Write(const uint8_t *data, size_t length)
 
 UartDriverStatus UartDriver_StartReceive(void)
 {
+    RingBufferStatus ringBufferStatus =
+        RingBuffer_Init(&uartRxBuffer,
+                    uartRxStorage,
+                    UART_RX_BUFFER_SIZE);
+
+    if (ringBufferStatus != RING_BUFFER_OK)
+    {
+        return UART_DRIVER_ERROR;
+    }
+
     HAL_StatusTypeDef halStatus =
         HAL_UART_Receive_IT(&huart2,
                             &uartRxByte,
@@ -66,11 +82,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         return;
     }
 
+    RingBufferStatus ringBufferStatus =
+        RingBuffer_Push(&uartRxBuffer, uartRxByte);
+
     (void)HAL_UART_Receive_IT(&huart2,
                               &uartRxByte,
                               1U);
     
-    if (notificationCallback != NULL)
+    if ((ringBufferStatus == RING_BUFFER_OK) &&
+        (notificationCallback != NULL))
     {
         notificationCallback();
     }
@@ -87,7 +107,6 @@ UartDriverStatus UartDriver_RegisterNotificationCallback(UartDriverNotificationC
 
     return UART_DRIVER_OK;
 }
-
 UartDriverStatus UartDriver_ReadByte(uint8_t *data)
 {
     if (data == NULL)
@@ -95,7 +114,20 @@ UartDriverStatus UartDriver_ReadByte(uint8_t *data)
         return UART_DRIVER_NULL_PTR;
     }
 
-    *data = uartRxByte;
+    RingBufferStatus status =
+        RingBuffer_Pop(&uartRxBuffer, data);
 
-    return UART_DRIVER_OK;
+    switch (status)
+    {
+        case RING_BUFFER_OK:
+            return UART_DRIVER_OK;
+
+        case RING_BUFFER_EMPTY:
+            return UART_DRIVER_NO_DATA;
+
+        case RING_BUFFER_NULL_PTR:
+        case RING_BUFFER_INVALID_CAPACITY:
+        default:
+            return UART_DRIVER_ERROR;
+    }
 }

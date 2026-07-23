@@ -15,17 +15,22 @@ static osSemaphoreId_t uartRxSemaphore;
 static void UartTask_Run(void *argument)
 {
     (void)argument;
+    uint8_t receivedByte;
 
-    UartDriverStatus status = UartDriver_StartReceive();
-
-    if (status != UART_DRIVER_OK)
+    if (UartDriver_StartReceive() != UART_DRIVER_OK)
     {
         // TODO: add error management
     }
 
     for (;;)
     {
-        osSemaphoreAcquire(uartRxSemaphore, osWaitForever);
+        if (osSemaphoreAcquire(uartRxSemaphore, osWaitForever) == osOK)
+        {
+            if (UartDriver_ReadByte(&receivedByte) == UART_DRIVER_OK)
+            {
+                (void)UartDriver_Write(&receivedByte, 1U);
+            }
+        }
     }
 }
 

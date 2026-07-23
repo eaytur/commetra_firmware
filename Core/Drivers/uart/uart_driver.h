@@ -18,5 +18,6 @@ typedef void (*UartDriverNotificationCallback)(void);
 UartDriverStatus UartDriver_Write(const uint8_t *data, size_t length);
 UartDriverStatus UartDriver_StartReceive(void);
 UartDriverStatus UartDriver_RegisterNotificationCallback(UartDriverNotificationCallback callback);
+UartDriverStatus UartDriver_ReadByte(uint8_t *data);
 
 #endif //UART_DRIVER_H

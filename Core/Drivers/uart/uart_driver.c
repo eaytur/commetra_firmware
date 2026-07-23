@@ -87,3 +87,15 @@ UartDriverStatus UartDriver_RegisterNotificationCallback(UartDriverNotificationC
 
     return UART_DRIVER_OK;
 }
+
+UartDriverStatus UartDriver_ReadByte(uint8_t *data)
+{
+    if (data == NULL)
+    {
+        return UART_DRIVER_NULL_PTR;
+    }
+
+    *data = uartRxByte;
+
+    return UART_DRIVER_OK;
+}
